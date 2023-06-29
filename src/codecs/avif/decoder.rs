@@ -33,20 +33,25 @@ pub struct AvifDecoder<R> {
 impl<R: Read> AvifDecoder<R> {
     /// Create a new decoder that reads its input from `r`.
     pub fn new(mut r: R) -> ImageResult<Self> {
+        println!("1");
         let ctx = read_avif(&mut r, ParseStrictness::Normal).map_err(error_map)?;
         let coded = ctx.primary_item_coded_data().unwrap_or_default();
 
         let mut primary_decoder = dav1d::Decoder::new();
+        println!("2");
         primary_decoder
             .send_data(coded, None, None, None)
             .map_err(error_map)?;
+        println!("3");
         let picture = primary_decoder.get_picture().map_err(error_map)?;
+        println!("4");
         let alpha_item = ctx.alpha_item_coded_data().unwrap_or_default();
         let alpha_picture = if !alpha_item.is_empty() {
             let mut alpha_decoder = dav1d::Decoder::new();
             alpha_decoder
                 .send_data(alpha_item, None, None, None)
                 .map_err(error_map)?;
+            println!("5");
             Some(alpha_decoder.get_picture().map_err(error_map)?)
         } else {
             None
@@ -55,7 +60,7 @@ impl<R: Read> AvifDecoder<R> {
             .icc_colour_information()
             .map(|x| x.ok().unwrap_or_default())
             .map(|x| x.to_vec());
-
+        println!("6");
         assert_eq!(picture.bit_depth(), 8);
         Ok(AvifDecoder {
             inner: PhantomData,

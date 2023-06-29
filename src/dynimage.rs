@@ -1236,6 +1236,14 @@ mod test {
         assert!(super::load_from_memory(b"").is_err());
     }
 
+    #[cfg(feature = "avif-decoder")]
+    #[test]
+    fn image_dimensions_avif() {
+        let im_path = "./tests/images/avif/avif-test.avif";
+        let dims = super::image_dimensions(im_path).unwrap();
+        assert_eq!(dims, (320, 240));
+    }
+
     #[cfg(feature = "jpeg")]
     #[test]
     fn image_dimensions() {
