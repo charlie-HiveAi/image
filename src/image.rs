@@ -68,6 +68,9 @@ pub enum ImageFormat {
     /// An Image in AVIF format.
     Avif,
 
+    /// An Image in Heif format.
+    Heif,
+
     /// An Image in QOI format.
     Qoi,
 }
@@ -94,6 +97,7 @@ impl ImageFormat {
 
             Some(match ext.as_str() {
                 "avif" => ImageFormat::Avif,
+                "heif" => ImageFormat::Heif,
                 "jpg" | "jpeg" => ImageFormat::Jpeg,
                 "png" => ImageFormat::Png,
                 "gif" => ImageFormat::Gif,
@@ -165,6 +169,7 @@ impl ImageFormat {
     {
         match mime_type.as_ref() {
             "image/avif" => Some(ImageFormat::Avif),
+            "image/heic" => Some(ImageFormat::Heif),
             "image/jpeg" => Some(ImageFormat::Jpeg),
             "image/png" => Some(ImageFormat::Png),
             "image/gif" => Some(ImageFormat::Gif),
@@ -210,6 +215,7 @@ impl ImageFormat {
     pub fn to_mime_type(&self) -> &'static str {
         match self {
             ImageFormat::Avif => "image/avif",
+            ImageFormat::Heif => "image/heic",
             ImageFormat::Jpeg => "image/jpeg",
             ImageFormat::Png => "image/png",
             ImageFormat::Gif => "image/gif",
@@ -251,6 +257,7 @@ impl ImageFormat {
             ImageFormat::Pnm => true,
             ImageFormat::Farbfeld => true,
             ImageFormat::Avif => true,
+            ImageFormat::Heif => true,
             ImageFormat::Qoi => true,
         }
     }
@@ -270,6 +277,7 @@ impl ImageFormat {
             ImageFormat::Pnm => true,
             ImageFormat::Farbfeld => true,
             ImageFormat::Avif => true,
+            ImageFormat::Heif => true,
             ImageFormat::WebP => true,
             ImageFormat::Hdr => false,
             ImageFormat::OpenExr => true,
@@ -304,6 +312,7 @@ impl ImageFormat {
             ImageFormat::Farbfeld => &["ff"],
             // According to: https://aomediacodec.github.io/av1-avif/#mime-registration
             ImageFormat::Avif => &["avif"],
+            ImageFormat::Heif => &["heif"],
             ImageFormat::Qoi => &["qoi"],
         }
     }
