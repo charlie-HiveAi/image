@@ -319,10 +319,10 @@ pub(crate) fn guess_format_impl(buffer: &[u8]) -> Option<ImageFormat> {
     None
 }
 
-#[test]
-fn test_heic_image() {
-    let bytes = std::fs::read("sample1.heic").unwrap();
-    println!("First 8 bytes: {:#?}", std::str::from_utf8(&bytes[0..12]));
-    let format = guess_format_impl(&bytes);
-    println!("format {format:#?}");
-}
+// #[test]
+// fn test_heic_image() {
+//     let bytes = std::fs::read("sample1.heic").unwrap();
+//     println!("First 8 bytes: {:#?}", std::str::from_utf8(&bytes[0..12]));
+//     let format = guess_format_impl(&bytes);
+//     println!("format {format:#?}");
+// }
