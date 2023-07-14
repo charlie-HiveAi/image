@@ -1,10 +1,10 @@
+use libheif_rs::HeifContext;
 use std::fs::File;
 use std::io::{BufRead, BufReader, BufWriter, Seek};
 use std::path::Path;
 use std::u32;
 
 use crate::codecs::*;
-
 use crate::dynimage::DynamicImage;
 use crate::error::{ImageError, ImageFormatHint, ImageResult};
 use crate::image;
@@ -116,6 +116,12 @@ pub(crate) fn load_inner<R: BufRead + Seek>(
 pub(crate) fn image_dimensions_impl(path: &Path) -> ImageResult<(u32, u32)> {
     let format = image::ImageFormat::from_path(path)?;
     let reader = BufReader::new(File::open(path)?);
+    if format == ImageFormat::Heif {
+        let ctx = HeifContext::read_from_file(path.to_string_lossy().to_string().as_str())?;
+        let handle = ctx.primary_image_handle()?;
+        return Ok((handle.width() as u32, handle.height() as u32));
+    }
+
     image_dimensions_with_format_impl(reader, format)
 }
 

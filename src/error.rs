@@ -16,6 +16,8 @@
 use std::error::Error;
 use std::{fmt, io};
 
+use libheif_rs::HeifError;
+
 use crate::color::ExtendedColorType;
 use crate::image::ImageFormat;
 
@@ -59,6 +61,8 @@ pub enum ImageError {
     /// * the implementation does not yet exist, or
     /// * no abstraction for a lower level could be found.
     Unsupported(UnsupportedError),
+
+    HeifError(HeifError),
 
     /// An error occurred while interacting with the environment.
     IoError(io::Error),
@@ -292,6 +296,12 @@ impl From<io::Error> for ImageError {
     }
 }
 
+impl From<HeifError> for ImageError {
+    fn from(err: HeifError) -> ImageError {
+        ImageError::HeifError(err)
+    }
+}
+
 impl From<ImageFormat> for ImageFormatHint {
     fn from(format: ImageFormat) -> Self {
         ImageFormatHint::Exact(format)
@@ -328,6 +338,7 @@ impl fmt::Display for ImageError {
             ImageError::Parameter(err) => err.fmt(fmt),
             ImageError::Limits(err) => err.fmt(fmt),
             ImageError::Unsupported(err) => err.fmt(fmt),
+            ImageError::HeifError(err) => err.fmt(fmt),
         }
     }
 }
@@ -341,6 +352,7 @@ impl Error for ImageError {
             ImageError::Parameter(err) => err.source(),
             ImageError::Limits(err) => err.source(),
             ImageError::Unsupported(err) => err.source(),
+            ImageError::HeifError(err) => err.source(),
         }
     }
 }
