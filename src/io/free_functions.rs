@@ -264,7 +264,7 @@ pub(crate) fn write_buffer_impl<W: std::io::Write + Seek>(
 }
 
 // https://legacy.imagemagick.org/api/MagickCore/magic_8c_source.html
-static MAGIC_BYTES: [(&[u8], ImageFormat); 27] = [
+static MAGIC_BYTES: [(&[u8], ImageFormat); 30] = [
     (b"\x89PNG\r\n\x1a\n", ImageFormat::Png),
     (&[0xff, 0xd8, 0xff], ImageFormat::Jpeg),
     (b"GIF89a", ImageFormat::Gif),
@@ -286,10 +286,13 @@ static MAGIC_BYTES: [(&[u8], ImageFormat); 27] = [
     (b"farbfeld", ImageFormat::Farbfeld),
     (b"\0\0\0 ftypavif", ImageFormat::Avif),
     (b"\0\0\0\x1cftypavif", ImageFormat::Avif),
-    (b"\0\0\0 ftypmif1", ImageFormat::Heif),
+    (b"\0\0\0\x1cftypheic", ImageFormat::Heif),
+    ("\0\0\0\u{18}ftypheic".as_bytes(), ImageFormat::Heif),
+    ("\0\0\0\u{18}ftypheix".as_bytes(), ImageFormat::Heif),
+    ("\0\0\0\u{18}ftypmif1".as_bytes(), ImageFormat::Heif),
     (b"\0\0\0 ftypheic", ImageFormat::Heif),
     (b"\0\0\0 ftypheix", ImageFormat::Heif),
-    (b"\0\0\0\x1cftypheic", ImageFormat::Heif),
+    (b"\0\0\0 ftypmif1", ImageFormat::Heif),
     (&[0x76, 0x2f, 0x31, 0x01], ImageFormat::OpenExr), // = &exr::meta::magic_number::BYTES
     (b"qoif", ImageFormat::Qoi),
 ];
@@ -314,4 +317,12 @@ pub(crate) fn guess_format_impl(buffer: &[u8]) -> Option<ImageFormat> {
     }
 
     None
+}
+
+#[test]
+fn test_heic_image() {
+    let bytes = std::fs::read("sample1.heic").unwrap();
+    println!("First 8 bytes: {:#?}", std::str::from_utf8(&bytes[0..12]));
+    let format = guess_format_impl(&bytes);
+    println!("format {format:#?}");
 }
